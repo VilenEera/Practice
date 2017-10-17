@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -50,5 +51,27 @@ public class MyBatisArticleRepositoryTest {
         assertThat(optional.get(),is(article));
         assertThat(optional.get().getTags().contains(new Tag("java")), is(true));
         assertThat(optional.get().getTags().contains(new Tag("spring")),is(true));
+    }
+
+    @Test
+    public void should_update_and_fetch_article_success()throws Exception {
+        articleRepository.save(article);
+
+        String newTitle = "new Test 2";
+        article.update(newTitle, "", "");
+        articleRepository.save(article);
+        assertThat(article.getSlug(),is("new-test-2"));
+        Optional<Article> optional = articleRepository.findbySlug(article.getSlug());
+        assertThat(optional.isPresent(),is(true));
+        Article fetched = optional.get();
+        assertThat(fetched.getTitle(),is(newTitle));
+        assertThat(fetched.getBody(),not(""));
+    }
+
+    @Test
+    public void should_delete_article()throws Exception {
+        articleRepository.save(article);
+        articleRepository.remove(article);
+        assertThat(articleRepository.findbyId(article.getId()).isPresent(),is(false));
     }
 }
