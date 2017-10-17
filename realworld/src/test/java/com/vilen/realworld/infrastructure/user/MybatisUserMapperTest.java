@@ -1,4 +1,4 @@
-package com.vilen.realworld.infrastructure.mybatis.mapper;
+package com.vilen.realworld.infrastructure.user;
 
 import com.vilen.realworld.core.user.User;
 import com.vilen.realworld.core.user.UserRepository;
@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @MybatisTest
 @Import(MyBatisUserRepository.class)
-public class MybatisUserMapperTest {
+public class MyBatisUserMapperTest {
     @Autowired
     private UserRepository userRepository;
     private User user;

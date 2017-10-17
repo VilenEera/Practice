@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.vilen.realworld.infrastructure.mybatis.mapper.UserMapper">
+<mapper namespace="com.vilen.realworld.infrastructure.user.UserMapper">
     <insert id="insert">
         insert into users (id, username, email, password, bio, image) values(
         #{user.id},

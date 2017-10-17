@@ -1,4 +1,4 @@
-package com.vilen.realworld.infrastructure.mybatis.mapper;
+package com.vilen.realworld.infrastructure.user;
 
 import com.vilen.realworld.core.user.User;
 import org.apache.ibatis.annotations.Mapper;

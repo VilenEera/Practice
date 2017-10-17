@@ -15,4 +15,10 @@ public class ArticleTest {
         Article article = new Article("123", "中文：标点标题", "desc", "body", new String[]{"java"});
         assertThat(article.getSlug(), is("中文-标点标题"));
     }
+
+    @Test
+    public void should_handle_commas()throws Exception {
+        Article article = new Article("123", "what?the.hell,w", "desc", "body", new String[]{"java"});
+        assertThat(article.getSlug(), is("what-the-hell-w"));
+    }
 }

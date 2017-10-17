@@ -27,7 +27,7 @@ public class Article {
     private String body;
     private List<Tag> tags;
     private DateTime createdAt;
-    private DateTime updateAt;
+    private DateTime updatedAt;
 
     public Article(String userId, String title, String description, String body, String[] tagList) {
         this(userId, title, description, body, tagList,new DateTime());
@@ -42,7 +42,7 @@ public class Article {
         this.body = body;
         this.tags = Arrays.stream(tagList).collect(toSet()).stream().map(Tag::new).collect(toList());
         this.createdAt = createdAt;
-        this.updateAt = createdAt;
+        this.updatedAt = createdAt;
     }
 
     public void update(String title, String description, String body) {
@@ -56,7 +56,7 @@ public class Article {
         if (!"".equals(body)) {
             this.body = body;
         }
-        this.updateAt = new DateTime();
+        this.updatedAt = new DateTime();
     }
 
     private String toSlug(String title) {
