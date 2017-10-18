@@ -17,7 +17,7 @@ public class UserUtil {
         protected Locale initialValue() {
             // 语言的默认值
             return Locale.CHINESE;
-        };
+        }
     };
 
     public static final String KEY_LANG = "lang";
