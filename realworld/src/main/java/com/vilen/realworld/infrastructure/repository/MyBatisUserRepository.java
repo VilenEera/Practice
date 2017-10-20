@@ -2,7 +2,7 @@ package com.vilen.realworld.infrastructure.repository;
 
 import com.vilen.realworld.core.user.User;
 import com.vilen.realworld.core.user.UserRepository;
-import com.vilen.realworld.infrastructure.user.UserMapper;
+import com.vilen.realworld.infrastructure.mybatis.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.vilen.realworld.infrastructure.user;
+package com.vilen.realworld.infrastructure.mybatis.mapper;
 
 import com.vilen.realworld.core.article.Article;
 import com.vilen.realworld.core.article.Tag;

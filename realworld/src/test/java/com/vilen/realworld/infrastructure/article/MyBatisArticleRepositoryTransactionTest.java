@@ -4,7 +4,7 @@ import com.vilen.realworld.core.article.Article;
 import com.vilen.realworld.core.article.ArticleRepository;
 import com.vilen.realworld.core.user.User;
 import com.vilen.realworld.core.user.UserRepository;
-import com.vilen.realworld.infrastructure.user.ArticleMapper;
+import com.vilen.realworld.infrastructure.mybatis.mapper.ArticleMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
