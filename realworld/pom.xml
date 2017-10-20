@@ -28,12 +28,8 @@
 	compile('org.springframework.boot:spring-boot-starter-hateoas')
 	compile('org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.0')
 	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('io.jsonwebtoken:jjwt:0.7.0')
-    compile('org.springframework.boot:spring-boot-starter-security')
 
 
-    testCompile 'io.rest-assured:rest-assured:3.0.2'
-	testCompile 'io.rest-assured:spring-mock-mvc:3.0.2'
 	testCompile 'org.springframework.security:spring-security-test:4.0.4.RELEASE'
 
 	testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
@@ -49,7 +45,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<!--compile('org.springframework.boot:spring-boot-starter-security')-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<!--compile('io.jsonwebtoken:jjwt:0.7.0')-->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.7.0</version>
+		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -85,6 +91,13 @@
 			<version>1.3.1</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.rest-assured/spring-mock-mvc -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>spring-mock-mvc</artifactId>
+			<version>3.0.5</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

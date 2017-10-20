@@ -6,6 +6,7 @@ import com.vilen.realworld.application.data.ArticleData;
 import com.vilen.realworld.core.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,7 @@ public class ArticleApi {
 
     @GetMapping
     public ResponseEntity<?> article(@PathVariable("slug") String slug,
-    User user) {
+                                     @AuthenticationPrincipal User user) {
         return articleQueryService.findBySlug(slug, user)
                 .map(articleData -> ResponseEntity.ok(articleResponse(articleData)))
                 .orElseThrow(ResourceNotFoundException::new);
