@@ -77,7 +77,7 @@ public class UsersApi {
         }
     }
 
-    private void checkInput(RegisterParam registerParam, BindingResult bindingResult) {
+    private void checkInput(@Valid @RequestBody RegisterParam registerParam, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InvalidRequestException(bindingResult);
         }

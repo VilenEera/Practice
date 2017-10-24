@@ -99,4 +99,19 @@ public class UsersApiTest {
             }});
         }};
     }
+
+    @Test
+    public void should_show_error_message_for_blank_username() throws Exception{
+        String email = "john@jacob.com";
+        String username = "";
+        Map<String, Object> param = prepareRegisterParameter(email, username);
+        given()
+                .contentType("application/json")
+                .body(param)
+                .when()
+                .post("/users")
+                .then()
+                .statusCode(422)
+                .body("errors.username[0]", equalTo("can't be empty"));
+    }
 }
