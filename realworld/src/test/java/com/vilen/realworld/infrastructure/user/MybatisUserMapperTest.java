@@ -1,5 +1,6 @@
 package com.vilen.realworld.infrastructure.user;
 
+import com.vilen.realworld.core.user.FollowRelation;
 import com.vilen.realworld.core.user.User;
 import com.vilen.realworld.core.user.UserRepository;
 import com.vilen.realworld.infrastructure.repository.MyBatisUserRepository;
@@ -39,5 +40,47 @@ public class MyBatisUserMapperTest {
         assertThat(userOptional.get(),is(user));
         Optional<User> userOptional2 = userRepository.findByEmail("aisensiy@163.com");
         assertThat(userOptional2.get(),is(user));
+    }
+
+    @Test
+    public void should_update_user_success() throws Exception{
+        String newEmail = "newemail@email.com";
+        user.update(newEmail,"","","","");
+        userRepository.save(user);
+
+        Optional<User> optional = userRepository.findByUsername(user.getUsername());
+        assertThat(optional.isPresent(),is(true));
+        assertThat(optional.get().getEmail(),is(newEmail));
+
+        String newUsername = "newUsername";
+        user.update("", newUsername, "", "", "");
+        userRepository.save(user);
+        optional = userRepository.findByEmail(user.getEmail());
+        assertThat(optional.isPresent(),is(true));
+        assertThat(optional.get().getUsername(), is(newUsername));
+        assertThat(optional.get().getImage(), is(user.getImage()));
+    }
+
+    @Test
+    public void should_create_new_user_success() throws Exception {
+        User other = new User("other@example.com", "other", "123", "", "");
+        userRepository.save(other);
+
+        FollowRelation followRelation = new FollowRelation(user.getId(), other.getId());
+        userRepository.saveRelation(followRelation);
+        assertThat(userRepository.findRelation(user.getId(),other.getId()).isPresent(),is(true));
+    }
+
+    @Test
+    public void should_unfollow_user_success() throws Exception {
+        User other = new User("other@example.com", "other", "123", "", "");
+        userRepository.save(other);
+
+        FollowRelation followRelation = new FollowRelation(user.getId(), other.getId());
+        userRepository.saveRelation(followRelation);
+        assertThat(userRepository.findRelation(user.getId(),other.getId()).isPresent(),is(true));
+
+        userRepository.removeRelation(followRelation);
+        assertThat(userRepository.findRelation(user.getId(),other.getId()).isPresent(),is(false));
     }
 }
