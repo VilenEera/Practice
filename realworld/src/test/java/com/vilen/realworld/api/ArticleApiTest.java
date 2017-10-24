@@ -1,5 +1,6 @@
 package com.vilen.realworld.api;
 
+import com.vilen.realworld.JacksonCustomizations;
 import com.vilen.realworld.TestHelper;
 import com.vilen.realworld.api.security.WebSecurityConfig;
 import com.vilen.realworld.application.ArticleQueryService;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest({ArticleApi.class})
-@Import({WebSecurityConfig.class})
+@Import({WebSecurityConfig.class, JacksonCustomizations.class})
 public class ArticleApiTest extends TestWithCurrentUser{
     @Autowired
     private MockMvc mvc;
@@ -63,7 +64,7 @@ public class ArticleApiTest extends TestWithCurrentUser{
                 .statusCode(200)
                 .body("article.slug", equalTo(slug))
                 .body("article.body", equalTo(articleData.getBody()))
-//                .body("article.createdAt", equalTo(ISODateTimeFormat.dateTime().withZoneUTC().print(time)))
+                .body("article.createdAt", equalTo(ISODateTimeFormat.dateTime().withZoneUTC().print(time)))
         ;
 
     }

@@ -1,8 +1,10 @@
 package com.vilen.realworld.infrastructure.mybatis.mapper;
 
+import com.vilen.realworld.core.user.FollowRelation;
 import com.vilen.realworld.core.user.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,4 +23,10 @@ public interface UserMapper {
     User findById(@Param("id") String id);
 
     void update(@Param("user") User user);
+
+    FollowRelation findRelation(@Param("userId") String userId, @Param("targetId") String targetId);
+
+    void saveRelation(@Param("followRelation") FollowRelation followRelation);
+
+    void deleteRelation(@Param("followRelation") FollowRelation followRelation);
 }
