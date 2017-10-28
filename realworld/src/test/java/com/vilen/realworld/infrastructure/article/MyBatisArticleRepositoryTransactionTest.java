@@ -38,9 +38,9 @@ public class MyBatisArticleRepositoryTransactionTest {
     public void transactional_test() throws Exception {
         User user = new User("vilen@gmail.com","vilen","123","bio","default");
         userRepository.save(user);
-        Article article = new Article(user.getId(), "test", "desc", "body", new String[]{"java", "spring"});
+        Article article = new Article("test", "desc", "body", new String[]{"java", "spring"}, user.getId());
         articleRepository.save(article);
-        Article anotherArticle = new Article(user.getId(), "test", "desc", "body", new String[]{"java", "spring", "other"});
+        Article anotherArticle = new Article("test", "desc", "body", new String[]{"java", "spring", "other"}, user.getId());
         boolean flag = false;
         try {
             articleRepository.save(anotherArticle);

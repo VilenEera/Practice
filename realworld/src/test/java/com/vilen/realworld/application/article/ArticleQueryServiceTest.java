@@ -1,11 +1,17 @@
 package com.vilen.realworld.application.article;
 
 import com.vilen.realworld.application.ArticleQueryService;
+import com.vilen.realworld.application.Page;
 import com.vilen.realworld.application.data.ArticleData;
+import com.vilen.realworld.application.data.ArticleDataList;
 import com.vilen.realworld.core.article.Article;
 import com.vilen.realworld.core.article.ArticleRepository;
+import com.vilen.realworld.core.favorite.ArticleFavorite;
+import com.vilen.realworld.core.favorite.ArticleFavoriteRepository;
+import com.vilen.realworld.core.user.FollowRelation;
 import com.vilen.realworld.core.user.User;
 import com.vilen.realworld.core.user.UserRepository;
+import com.vilen.realworld.infrastructure.repository.MyBatisArticleFavoriteRepository;
 import com.vilen.realworld.infrastructure.repository.MyBatisArticleRepository;
 import com.vilen.realworld.infrastructure.repository.MyBatisUserRepository;
 import org.joda.time.DateTime;
@@ -31,30 +37,35 @@ import static org.junit.Assert.assertThat;
 @Import({
         ArticleQueryService.class,
         MyBatisUserRepository.class,
-        MyBatisArticleRepository.class
+        MyBatisArticleRepository.class,
+        MyBatisArticleFavoriteRepository.class
 })
 public class ArticleQueryServiceTest {
     @Autowired
-    private ArticleQueryService articleQueryService;
+    private ArticleQueryService queryService;
+
     @Autowired
     private ArticleRepository articleRepository;
+
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ArticleFavoriteRepository articleFavoriteRepository;
+
     private User user;
     private Article article;
-
     @Before
     public void setUp() throws Exception{
         user = new User("vilen@gmail.com", "vilen", "123", "bio", "image");
         userRepository.save(user);
-        article = new Article(user.getId(), "test", "desc", "body", new String[]{"java", "spring"}, new DateTime());
+        article = new Article("test", "desc", "body", new String[]{"java", "spring"}, user.getId(), new DateTime());
         articleRepository.save(article);
     }
 
     @Test
     public void should_fetch_article_success() throws Exception {
-        Optional<ArticleData> optional = articleQueryService.findById(article.getId(), user);
+        Optional<ArticleData> optional = queryService.findById(article.getId(), user);
         assertThat(optional.isPresent(), is(true));
         ArticleData fetched = optional.get();
         assertThat(fetched.getFavoritesCount(), is(0));
@@ -64,15 +75,108 @@ public class ArticleQueryServiceTest {
         assertThat(fetched.getTagList().contains("java"), is(true));
     }
 
-//    @Test
-//    public void should_get_article_with_right_favorite_and_favorite_count() throws Exception {
-//        User anotherUser = new User("other@test.com", "other", "123", "", "");
-//        userRepository.save(anotherUser);
-//        articleFavoriteRepository.save(new ArticleFavorite(article.getId(), anotherUser.getId()));
-//
-//        ArticleData articleData = queryService.findById(article.getId(), anotherUser).get();
-//        assertThat(articleData.getFavoritesCount(), is(1));
-//        assertThat(articleData.isFavorited(), is(true));
-//    }
+    @Test
+    public void should_get_article_with_right_favorite_and_favorite_count() throws Exception {
+    User anotherUser = new User("other@test.com", "other", "123", "", "");
+    userRepository.save(anotherUser);
+    articleFavoriteRepository.save(new ArticleFavorite(article.getId(), anotherUser.getId()));
+
+    ArticleData articleData = queryService.findById(article.getId(), anotherUser).get();
+    assertThat(articleData.getFavoritesCount(), is(1));
+    assertThat(articleData.isFavorited(), is(true));
+}
+
+    @Test
+    public void should_get_default_article_list() throws Exception {
+        Article anotherArticle = new Article("new article", "desc", "body", new String[]{"test"}, user.getId(), new DateTime().minusHours(1));
+        articleRepository.save(anotherArticle);
+
+        ArticleDataList recentArticles = queryService.findRecentArticles(null, null, null, new Page(), user);
+        assertThat(recentArticles.getCount(), is(2));
+        assertThat(recentArticles.getArticleDatas().size(), is(2));
+        assertThat(recentArticles.getArticleDatas().get(0).getId(), is(article.getId()));
+
+        ArticleDataList nodata = queryService.findRecentArticles(null, null, null, new Page(2, 10), user);
+        assertThat(nodata.getCount(), is(2));
+        assertThat(nodata.getArticleDatas().size(), is(0));
+    }
+
+    @Test
+    public void should_query_article_by_author() throws Exception {
+        User anotherUser = new User("other@email.com", "other", "123", "", "");
+        userRepository.save(anotherUser);
+
+        Article anotherArticle = new Article("new article", "desc", "body", new String[]{"test"}, anotherUser.getId());
+        articleRepository.save(anotherArticle);
+
+        ArticleDataList recentArticles = queryService.findRecentArticles(null, user.getUsername(), null, new Page(), user);
+        assertThat(recentArticles.getArticleDatas().size(), is(1));
+        assertThat(recentArticles.getCount(), is(1));
+    }
+
+    @Test
+    public void should_query_article_by_favorite() throws Exception {
+        User anotherUser = new User("other@email.com", "other", "123", "", "");
+        userRepository.save(anotherUser);
+
+        Article anotherArticle = new Article("new article", "desc", "body", new String[]{"test"}, anotherUser.getId());
+        articleRepository.save(anotherArticle);
+
+        ArticleFavorite articleFavorite = new ArticleFavorite(article.getId(), anotherUser.getId());
+        articleFavoriteRepository.save(articleFavorite);
+
+        ArticleDataList recentArticles = queryService.findRecentArticles(null, null, anotherUser.getUsername(), new Page(), anotherUser);
+        assertThat(recentArticles.getArticleDatas().size(), is(1));
+        assertThat(recentArticles.getCount(), is(1));
+        ArticleData articleData = recentArticles.getArticleDatas().get(0);
+        assertThat(articleData.getId(), is(article.getId()));
+        assertThat(articleData.getFavoritesCount(), is(1));
+        assertThat(articleData.isFavorited(), is(true));
+    }
+
+    @Test
+    public void should_query_article_by_tag() throws Exception {
+        Article anotherArticle = new Article("new article", "desc", "body", new String[]{"test"}, user.getId());
+        articleRepository.save(anotherArticle);
+
+        ArticleDataList recentArticles = queryService.findRecentArticles("spring", null, null, new Page(), user);
+        assertThat(recentArticles.getArticleDatas().size(), is(1));
+        assertThat(recentArticles.getCount(), is(1));
+        assertThat(recentArticles.getArticleDatas().get(0).getId(), is(article.getId()));
+
+        ArticleDataList notag = queryService.findRecentArticles("notag", null, null, new Page(), user);
+        assertThat(notag.getCount(), is(0));
+    }
+
+    @Test
+    public void should_show_following_if_user_followed_author() throws Exception {
+        User anotherUser = new User("other@email.com", "other", "123", "", "");
+        userRepository.save(anotherUser);
+
+        FollowRelation followRelation = new FollowRelation(anotherUser.getId(), user.getId());
+        userRepository.saveRelation(followRelation);
+
+        ArticleDataList recentArticles = queryService.findRecentArticles(null, null, null, new Page(), anotherUser);
+        assertThat(recentArticles.getCount(), is(1));
+        ArticleData articleData = recentArticles.getArticleDatas().get(0);
+        assertThat(articleData.getProfileData().isFollowing(), is(true));
+    }
+
+    @Test
+    public void should_get_user_feed() throws Exception {
+        User anotherUser = new User("other@email.com", "other", "123", "", "");
+        userRepository.save(anotherUser);
+
+        FollowRelation followRelation = new FollowRelation(anotherUser.getId(), user.getId());
+        userRepository.saveRelation(followRelation);
+
+        ArticleDataList userFeed = queryService.findUserFeed(user, new Page());
+        assertThat(userFeed.getCount(), is(0));
+
+        ArticleDataList anotherUserFeed = queryService.findUserFeed(anotherUser, new Page());
+        assertThat(anotherUserFeed.getCount(), is(1));
+        ArticleData articleData = anotherUserFeed.getArticleDatas().get(0);
+        assertThat(articleData.getProfileData().isFollowing(), is(true));
+    }
 
 }

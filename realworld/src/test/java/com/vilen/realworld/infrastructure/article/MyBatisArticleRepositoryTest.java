@@ -40,13 +40,13 @@ public class MyBatisArticleRepositoryTest {
     public void setUp()throws Exception{
         User user = new User("vilen@gmail.com", "vilen", "123", "bio", "default");
         userRepository.save(user);
-        article = new Article(user.getId(), "test", "desc", "body", new String[]{"java", "spring"});
+        article = new Article("test", "desc", "body", new String[]{"java", "spring"}, user.getId());
     }
 
     @Test
     public void should_create_and_fetch_article_success() throws Exception {
         articleRepository.save(article);
-        Optional<Article> optional = articleRepository.findbyId(article.getId());
+        Optional<Article> optional = articleRepository.findById(article.getId());
         assertThat(optional.isPresent(), is(true));
         assertThat(optional.get(),is(article));
         assertThat(optional.get().getTags().contains(new Tag("java")), is(true));
@@ -61,7 +61,7 @@ public class MyBatisArticleRepositoryTest {
         article.update(newTitle, "", "");
         articleRepository.save(article);
         assertThat(article.getSlug(),is("new-test-2"));
-        Optional<Article> optional = articleRepository.findbySlug(article.getSlug());
+        Optional<Article> optional = articleRepository.findBySlug(article.getSlug());
         assertThat(optional.isPresent(),is(true));
         Article fetched = optional.get();
         assertThat(fetched.getTitle(),is(newTitle));
@@ -72,6 +72,6 @@ public class MyBatisArticleRepositoryTest {
     public void should_delete_article()throws Exception {
         articleRepository.save(article);
         articleRepository.remove(article);
-        assertThat(articleRepository.findbyId(article.getId()).isPresent(),is(false));
+        assertThat(articleRepository.findById(article.getId()).isPresent(),is(false));
     }
 }

@@ -29,18 +29,18 @@ public class Article {
     private DateTime createdAt;
     private DateTime updatedAt;
 
-    public Article(String userId, String title, String description, String body, String[] tagList) {
-        this(userId, title, description, body, tagList,new DateTime());
+    public Article(String title, String description, String body, String[] tagList, String userId) {
+        this(title, description, body, tagList, userId, new DateTime());
     }
 
-    public Article(String userId, String title, String description, String body, String[] tagList, DateTime createdAt) {
+    public Article(String title, String description, String body, String[] tagList, String userId, DateTime createdAt) {
         this.id = UUID.randomUUID().toString();
-        this.userId = userId;
         this.slug = toSlug(title);
         this.title = title;
         this.description = description;
         this.body = body;
         this.tags = Arrays.stream(tagList).collect(toSet()).stream().map(Tag::new).collect(toList());
+        this.userId = userId;
         this.createdAt = createdAt;
         this.updatedAt = createdAt;
     }

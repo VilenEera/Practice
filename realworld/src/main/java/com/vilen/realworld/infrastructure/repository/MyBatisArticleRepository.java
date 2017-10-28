@@ -42,12 +42,12 @@ public class MyBatisArticleRepository implements ArticleRepository {
     }
 
     @Override
-    public Optional<Article> findbyId(String id) {
+    public Optional<Article> findById(String id) {
         return Optional.ofNullable(articleMapper.findById(id));
     }
 
     @Override
-    public Optional<Article> findbySlug(String slug) {
+    public Optional<Article> findBySlug(String slug) {
         return Optional.ofNullable(articleMapper.findBySlug(slug));
     }
 
