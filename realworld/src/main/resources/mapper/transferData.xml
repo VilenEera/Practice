@@ -29,11 +29,11 @@
         </collection>
     </resultMap>
 
-    <!--<resultMap id="commentData" type="com.vilen.realworld.application.data.CommentData">-->
-        <!--<id column="commentId" property="id"/>-->
-        <!--<result column="commentBody" property="body"/>-->
-        <!--<result column="commentCreatedAt" property="createdAt"/>-->
-        <!--<result column="commentCreatedAt" property="updatedAt"/>-->
-        <!--<association property="profileData" resultMap="profileData"/>-->
-    <!--</resultMap>-->
+    <resultMap id="commentData" type="com.vilen.realworld.application.data.CommentData">
+        <id column="commentId" property="id"/>
+        <result column="commentBody" property="body"/>
+        <result column="commentCreatedAt" property="createdAt"/>
+        <result column="commentCreatedAt" property="updatedAt"/>
+        <association property="profileData" resultMap="profileData"/>
+    </resultMap>
 </mapper>
